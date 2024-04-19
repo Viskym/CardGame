@@ -1,4 +1,6 @@
 import unittest
+
+import cards
 from FiveCardDraw import *
 
 
@@ -8,7 +10,8 @@ class TestFiveCardDraw(unittest.TestCase):
         self.game = FiveCardDraw(['Alice', 'Bob'], 100)
         self.RoyalFlush = [Card('Hearts', '10'), Card('Hearts', 'J'), Card('Hearts', 'Q'), Card('Hearts', 'K'),
                            Card('Hearts', 'A')]
-        self.StraightFlush =[Card('Hearts', '9'), Card('Hearts', '10'), Card('Hearts', 'J'), Card('Hearts', 'Q'), Card('Hearts', 'K')]
+        self.StraightFlush = [Card('Hearts', '9'), Card('Hearts', '10'), Card('Hearts', 'J'), Card('Hearts', 'Q'),
+                              Card('Hearts', 'K')]
         self.Four = [Card('Clubs', '5'), Card('Hearts', '5'), Card('Diamonds', '5'), Card('Spades', '5'),
                      Card('Hearts', 'A')]
         self.FullHouse = [Card('Clubs', '3'), Card('Diamonds', '3'), Card('Hearts', '3'), Card('Hearts', '6'),
@@ -25,9 +28,11 @@ class TestFiveCardDraw(unittest.TestCase):
                       Card('Hearts', 'K')]
         self.HighCard = [Card('Clubs', '3'), Card('Clubs', '4'), Card('Clubs', '2'), Card('Hearts', '6'),
                          Card('Hearts', 'K')]
+        self.hand1 = cards.create_card_list("[♥10, ♣Q, ♣3, ♠4, ♥5]")
+        self.hand2 = cards.create_card_list("[♠10, ♣2, ♥K, ♣8, ♦5]")
 
     def test_cards(self):
-        self.cardA = Card('Hearts', 'A')
+        self.cardA = Card('♥', 'A')
         self.card10 = Card('Clubs', '10')
         temp = Card('Hearts', 'A') > Card('Clubs', '10')
         self.assertEqual(temp, True)
@@ -63,16 +68,28 @@ class TestFiveCardDraw(unittest.TestCase):
         # High Card
         self.assertEqual(hand_rank(self.HighCard), (0, ['K', '6', '4', '3', '2']))
 
+        # Cases from games
+        self.assertEqual(hand_rank(self.hand1), (0, ['Q', '10', '5', '4', '3']))
+        self.assertEqual(hand_rank(self.hand2), (0, ['K', '10', '8', '5', '2']))
+
     def test_compare_hands(self):
         P1 = Player('Alice')
         P2 = Player('Bob')
 
         P1.hands = self.RoyalFlush
         P2.hands = self.StraightFlush
-        self.assertEqual(compare_hands(P1,P2), P1)
+        self.assertEqual(compare_hands(P1, P2), P1)
 
         P1.hands = self.TwoPair
         P2.hands = self.FullHouse
+        self.assertEqual(compare_hands(P1, P2), P1)
+
+        P1.hands = self.hand1
+        P2.hands = self.hand2
+        self.assertEqual(compare_hands(P1, P2), P2)
+
+        P1.hands = cards.create_card_list("[♥4, ♥Q, ♠2, ♥5, ♠A]")
+        P2.hands = cards.create_card_list("[♦2, ♦3, ♦4, ♥7, ♥A]")
         self.assertEqual(compare_hands(P1, P2), P1)
 
 

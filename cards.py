@@ -6,17 +6,21 @@ class Card:
     suits = ['Spades', 'Hearts', 'Diamonds', 'Clubs']
 
     def __init__(self, suit, rank) -> None:
-        self.suit = suit
+        self.suit_dict = {'♠': 'Spades', '♥': 'Hearts', '♦': 'Diamonds', '♣': 'Clubs'}
+        if suit in self.suit_dict.keys():
+            self.suit = self.suit_dict[suit]
+        else:
+            self.suit = suit
         self.rank = rank
 
     def __repr__(self) -> str:
-        self.dic = {
+        color_dict = {
             'Spades': '\033[30m♠\033[0m',
             'Hearts': '\033[31m♥\033[0m',
             'Diamonds': '\033[31m♦\033[0m',
             'Clubs': '\033[30m♣\033[0m',
         }
-        return self.dic[self.suit] + self.dic.get(self.rank, self.rank)
+        return color_dict[self.suit] + self.rank
 
     def reveal(self):
         print(str(self))
@@ -29,6 +33,7 @@ class Card:
     def __lt__(self, other):
         return (self.ranks.index(self.rank), self.suits.index(self.suit)) < (
             self.ranks.index(other.rank), self.suits.index(other.suit))
+
 
 class Deck:
     def __init__(self) -> None:
@@ -91,3 +96,16 @@ class Player:
 
     def __eq__(self, other):
         return self.wins == other.wins
+
+
+def create_card_list(card_string):
+    import re
+    # Extract cards from the string using a pattern that captures suit symbols followed by one or more digits or letters
+    card_pattern = r'([♥♦♣♠])(\d{1,2}|[JQKA])'
+    matches = re.findall(card_pattern, card_string)
+
+    cards = []
+    for suit, rank in matches:
+        cards.append(Card(suit, rank))
+
+    return cards
