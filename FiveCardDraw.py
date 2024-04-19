@@ -20,20 +20,86 @@ class FiveCardDraw:
             print(f"{player.name}'s hand: {player.hands}")
 
     def betting_round(self):
+        """
+        Start Betting Round:
+        Begin with the first player.
+        Is Player Active?:
+        Check if the player is currently active (i.e., not folded in previous betting rounds).
+        If No, skip to the next player.
+        If Yes, proceed to the next step.
+        Has a Bet Been Made?:
+        Determine if there has been a bet in this round.
+        If No, the player has three options: Bet, Check, or Fold.
+        If Yes, the player has three options: Call, Raise, or Fold.
+        Player Decision (No Previous Bet):
+        Bet: The player decides to bet. Prompt for bet amount, subtract from player's money, add to pot, and set this as the current bet.
+        Check: The player decides to check, do nothing.
+        Fold: The player decides to fold, mark player as inactive.
+        Player Decision (With Previous Bet):
+        Call: The player meets the current bet. Subtract the bet amount from player's money, add to pot.
+        Raise: The player increases the bet. Prompt for new total bet amount, check if it's greater than the current bet, subtract from player's money, add to pot, update the current bet.
+        Fold: The player decides to fold, mark player as inactive.
+        Next Player:
+        Move to the next player and repeat the process.
+        End of Round Check:
+        After all players have made their decisions, check if additional responses are needed (e.g., if there was a raise).
+        If additional betting is required (e.g., due to a raise), repeat the betting round starting from the next player after the one who made the raise.
+        If no further betting is required, conclude the betting round.
+        End Betting Round:
+        The betting round ends when all active players have either called the highest bet or folded.
+        """
+        current_bet = 0
+        num_bets = 0  # Tracks number of bets to handle raises correctly
+
         for player in self.players:
-            if player.name == 'Bob':
-                print('Bob checks.')
-            else:
-                if not player.active:
-                    continue
-                action = input(f"{player.name}, do you want to bet, fold, or check? (bet/fold/check): ")
-                if action == 'fold':
-                    player.active = False
-                elif action == 'bet':
-                    bet_amount = int(input(f"{player.name}, how much would you like to bet? "))
-                    player.money -= bet_amount
-                    self.pot += bet_amount
-                # Assume 'check' does nothing
+            if not player.active:
+                continue
+
+            while True:
+                if current_bet == 0:
+                    action = input(f"{player.name}, do you want to bet, fold, or check? (bet/fold/check): ")
+                    if action == 'fold':
+                        player.active = False
+                        break
+                    elif action == 'bet':
+                        bet_amount = int(input(f"{player.name}, how much would you like to bet? "))
+                        if bet_amount <= 0 or bet_amount > player.money:
+                            print("Invalid bet amount.")
+                            continue
+                        player.money -= bet_amount
+                        self.pot += bet_amount
+                        current_bet = bet_amount
+                        num_bets += 1
+                        break
+                    elif action == 'check':
+                        break
+                else:
+                    action = input(f"{player.name}, do you want to call, raise, or fold? (call/raise/fold): ")
+                    if action == 'fold':
+                        player.active = False
+                        break
+                    elif action == 'call':
+                        if player.money < current_bet:
+                            print(f"Not enough funds to call. {player.name} folds.")
+                            player.active = False
+                        else:
+                            player.money -= current_bet
+                            self.pot += current_bet
+                        break
+                    elif action == 'raise':
+                        raise_amount = int(input(f"{player.name}, how much total would you like to bet? "))
+                        if raise_amount <= current_bet or raise_amount > player.money:
+                            print("Invalid raise amount.")
+                            continue
+                        player.money -= raise_amount
+                        self.pot += raise_amount
+                        current_bet = raise_amount
+                        num_bets += 1
+                        break
+
+        # Allow other players to respond to the last bet/raise
+        if num_bets > 1:
+            self.betting_round()
 
     def draw_phase(self):
         for player in self.players:
@@ -66,7 +132,25 @@ class FiveCardDraw:
 
 
 def hand_rank(hand):
-    """ Returns the rank of the hand in a form that can be compared easily. """
+    """
+    Determines the ranking of a poker hand.
+
+    >>> RoyalFlush = [Card('Hearts', '10'), Card('Hearts', 'J'), Card('Hearts', 'Q'), Card('Hearts', 'K'), Card('Hearts', 'A')]
+    >>> hand_rank(RoyalFlush)
+    (8, 'A')
+
+    >>> StraightFlush = [Card('Hearts', '9'), Card('Hearts', '10'), Card('Hearts', 'J'), Card('Hearts', 'Q'), Card('Hearts', 'K')]
+    >>> hand_rank(StraightFlush)
+    (8, 'K')
+
+    >>> Four = [Card('Clubs', '5'), Card('Hearts', '5'), Card('Diamonds', '5'), Card('Spades', '5'), Card('Hearts', 'A')]
+    >>> hand_rank(Four)
+    (7, ['5', 'A'])
+
+    >>> case2 = create_card_list("[♠10, ♣2, ♥K, ♣8, ♦5]")
+    >>> hand_rank(case2)
+    (0, ['K', '10', '8', '5', '2'])
+    """
     hand_only_rank = [c.rank for c in hand]
     rank_counts = {r: ''.join(sorted(hand_only_rank)).count(r) for r in hand_only_rank}
     rank_sorted = sorted(rank_counts, key=lambda r: (rank_counts[r], Card.ranks.index(r)), reverse=True)

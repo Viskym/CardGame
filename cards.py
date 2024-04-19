@@ -2,6 +2,14 @@ import random
 
 
 class Card:
+    """
+    Represents a playing card with a suit and rank.
+
+    >>> cardA = Card('Hearts', 'A')
+    >>> card10 = Card('Clubs', '10')
+    >>> cardA > card10
+    True
+    """
     ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
     suits = ['Spades', 'Hearts', 'Diamonds', 'Clubs']
 

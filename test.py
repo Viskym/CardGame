@@ -2,7 +2,7 @@ import unittest
 
 import cards
 from FiveCardDraw import *
-
+from unittest.mock import patch
 
 class TestFiveCardDraw(unittest.TestCase):
     def setUp(self):
@@ -91,6 +91,33 @@ class TestFiveCardDraw(unittest.TestCase):
         P1.hands = cards.create_card_list("[♥4, ♥Q, ♠2, ♥5, ♠A]")
         P2.hands = cards.create_card_list("[♦2, ♦3, ♦4, ♥7, ♥A]")
         self.assertEqual(compare_hands(P1, P2), P1)
+    @patch('builtins.input', side_effect=['bet', '10', 'fold'])
+    @patch('builtins.print')
+    def test_betting_round(self, mock_print, mock_input):
+        """
+        Test betting round where Alice bets 10 and Bob folds.
+        """
+        self.game.betting_round()
+
+        # Assert Alice's money is reduced by 10 and Bob is inactive
+        self.assertEqual(self.game.players[0].money, 90)  # Alice starts with 100 and bets 10
+        self.assertFalse(self.game.players[1].active)  # Bob folds
+        self.assertEqual(self.game.pot, 10)  # Pot should have Alice's bet
+
+    @patch('builtins.input', side_effect=['check', 'check'])
+    @patch('builtins.print')
+    def test_betting_round_checks(self, mock_print, mock_input):
+        """
+        Test betting round where both players check.
+        """
+        self.game.betting_round()
+
+        # Assert that no money is taken and both are still active
+        self.assertEqual(self.game.players[0].money, 100)  # Alice's money remains the same
+        self.assertEqual(self.game.players[1].money, 100)  # Bob's money remains the same
+        self.assertTrue(self.game.players[0].active)  # Alice is still active
+        self.assertTrue(self.game.players[1].active)  # Bob is still active
+        self.assertEqual(self.game.pot, 0)  # Pot should remain empty
 
 
 # This allows the tests to be run from the command line
