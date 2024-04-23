@@ -51,8 +51,8 @@ def choose_discard(mode: str, hand: list[cards.Card]):
     return discard_list
 
 
-"""
-function best_discard_strategy(hand):
+
+def best_discard_strategy(hand):
     # Initialize variables to track the best strategy and its value
     max_value = 0
     best_discard = []
@@ -71,10 +71,48 @@ function best_discard_strategy(hand):
 
     return best_discard
 
-function generate_all_possible_discards(hand):
+def generate_all_possible_discards(hand):
     # Generate all subsets of the hand (all possible sets of cards to discard), 32 in total.
-    return generate_subsets(hand)
+    all_possible_discards = []
 
+    # Case of 1 card
+    for i in range(len(hand)):
+
+        all_possible_discards.append([hand[i]])
+
+    # Case of 2 cards
+    for i in range(len(hand)):
+
+        for j in range(i + 1, len(hand)):
+
+            if i != j:
+
+                all_possible_discards.append([hand[i], hand[j]])
+    # Case of 3 cards
+    for i in range(len(hand)):
+
+        for j in range(i + 1, len(hand)):
+
+            for k in range(j + 1, len(hand)):
+
+                if i != j != k:
+                    all_possible_discards.append([hand[i], hand[j], hand[k]])
+    # Case of 4 cards
+
+    # Case of 5 cards
+    # Will probably try this again with recursion maybe
+    
+
+
+
+
+
+
+
+    return all_possible_discards
+
+print(generate_all_possible_discards([1,2,3]))
+"""
 function simulate_new_hands(original_hand, discard_set):
     # Simulate drawing cards to replace the discarded ones and generate new hands. 
     remaining_deck = get_remaining_deck(original_hand, discard_set)
