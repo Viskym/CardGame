@@ -1,5 +1,5 @@
 from cards import *
-
+import bot
 
 class FiveCardDraw:
     def __init__(self, player_names, starting_money):
@@ -104,7 +104,9 @@ class FiveCardDraw:
     def draw_phase(self):
         for player in self.players:
             if player.name == 'Bob':
-                print('Bob replaces nothing.')
+                discard_indices = bot.choose_discard("PatternKeeper", player.hands)
+                print(f"Bob discarded: {discard_indices}")
+                self.replace_cards(player, discard_indices)
             else:
                 if not player.active:
                     continue

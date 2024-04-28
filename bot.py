@@ -14,7 +14,7 @@ def choose_betting(isFinal: bool, hand: list[Card]):
     >>> chooose_betting(True,cards.create_card_list("[♦5, ♥Q, ♠9, ♦9, ♥9]"))
     ('raise',0.25)
     """
-    pass
+    return ('call',0)
 
 
 def choose_discard(mode: str, hand: list[Card]):
@@ -25,21 +25,18 @@ def choose_discard(mode: str, hand: list[Card]):
     pro: works for pair, two pairs, three of a kind, four of a kind
     con: Unable to form strategy for flush,straight. It will see straight and flush candidates as Highcard.
 
-    Highcard with A, discard the rest.
-    >>> choose_discard("PatternKeeper",cards.create_card_list("[♥4, ♥Q, ♠2, ♥5, ♠A]"))
-    [1,2,3,4]
-    A pair, discard the rest.
-    >>> choose_discard("PatternKeeper",cards.create_card_list("[♣4, ♦4, ♥10, ♦A, ♣Q]"))
-    [3,4,5]
-    Two pairs, discard the rest.
-    >>> choose_discard("PatternKeeper",cards.create_card_list("[♠5, ♥5, ♠4, ♣8, ♥8]"))
+
+    >>> choose_discard("PatternKeeper",create_card_list("[♥4, ♥Q, ♠2, ♥5, ♠A]"))
+    [1, 2, 3, 4]
+    >>> choose_discard("PatternKeeper",create_card_list("[♣4, ♦4, ♥10, ♦A, ♣Q]"))
+    [3, 4, 5]
+    >>> choose_discard("PatternKeeper",create_card_list("[♠5, ♥5, ♠4, ♣8, ♥8]"))
     [3]
-    Three of a kind, discard the rest.
-    >>> choose_discard("PatternKeeper",cards.create_card_list("[♠4, ♦5, ♠6, ♣4, ♥4]"))
-    [2,3]
-    >>> choose_discard("DecisionTree",cards.create_card_list("[♣A, ♣4, ♣8, ♣5, ♥7]"))
+    >>> choose_discard("PatternKeeper",create_card_list("[♠4, ♦5, ♠6, ♣4, ♥4]"))
+    [2, 3]
+    >>> choose_discard("DecisionTree",create_card_list("[♣A, ♣4, ♣8, ♣5, ♥7]"))
     [5]
-    >>> choose_discard("DecisionTree",cards.create_card_list("[♦9, ♦10, ♥6, ♥Q, ♠8]"))
+    >>> choose_discard("DecisionTree",create_card_list("[♦9, ♦10, ♥6, ♥Q, ♠8]"))
     [2]
     """
     #hand_types = ["High card", "One pair", "Two pairs", "Three of a kind", "Straight", "Flush", "Full house",
