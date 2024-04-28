@@ -1,7 +1,7 @@
-import cards
+from cards import *
+from FiveCardDraw import hand_rank
 
-
-def choose_betting(isFinal: bool, hand: list[cards.Card]):
+def choose_betting(isFinal: bool, hand: list[Card]):
     """
     >>> choose_betting(False,cards.create_card_list("[♥4, ♥Q, ♠2, ♥5, ♠A]"))
     ('check',0)
@@ -17,7 +17,7 @@ def choose_betting(isFinal: bool, hand: list[cards.Card]):
     pass
 
 
-def choose_discard(mode: str, hand: list[cards.Card]):
+def choose_discard(mode: str, hand: list[Card]):
     """
     PatternKeeper:
     1. Evaluate existing hand
@@ -37,19 +37,47 @@ def choose_discard(mode: str, hand: list[cards.Card]):
     Three of a kind, discard the rest.
     >>> choose_discard("PatternKeeper",cards.create_card_list("[♠4, ♦5, ♠6, ♣4, ♥4]"))
     [2,3]
-
     >>> choose_discard("DecisionTree",cards.create_card_list("[♣A, ♣4, ♣8, ♣5, ♥7]"))
     [5]
     >>> choose_discard("DecisionTree",cards.create_card_list("[♦9, ♦10, ♥6, ♥Q, ♠8]"))
     [2]
     """
+    #hand_types = ["High card", "One pair", "Two pairs", "Three of a kind", "Straight", "Flush", "Full house",
+                  # "Four of a kind", "Straight flush"]
+
     match mode:
         case 'PatternKeeper':
-            pass
+            pattern,rank_sorted  = hand_rank(hand)
+            discard_list = []
+            hand_only_rank = [c.rank for c in hand]
+            rank_sorted_by_index = sorted(rank_sorted, key=lambda r: Card.ranks.index(r), reverse=True)
+            match pattern:
+                case 8:
+                    pass
+                case 7: #four of a kind
+                    discard_list.append(hand_only_rank.index(rank_sorted[1])+1)
+                case 6: #full house
+                    pass
+                case 5: #flush
+                    pass
+                case 4: #straight
+                    pass
+                case 3: #three of a kind
+                    discard_list.append(hand_only_rank.index(rank_sorted[1])+1)
+                    discard_list.append(hand_only_rank.index(rank_sorted[2])+1)
+                case 2: #two pairs
+                    discard_list.append(hand_only_rank.index(rank_sorted[-1])+1)
+                case 1: #one pair
+                    for i in range(1,4):
+                        discard_list.append(hand_only_rank.index(rank_sorted[i])+1)
+                case 0: #high card
+                    for i in range(1,5):
+                        discard_list.append(hand_only_rank.index(rank_sorted_by_index[i])+1)
+
+    #generate discard
         case 'DecisionTree':
             pass
-    return discard_list
-
+    return sorted(discard_list) if len(discard_list) != 0 else discard_list
 
 
 def best_discard_strategy(hand):

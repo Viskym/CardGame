@@ -3,6 +3,7 @@ import unittest
 import cards
 from FiveCardDraw import *
 from unittest.mock import patch
+from bot import *
 
 class TestFiveCardDraw(unittest.TestCase):
     def setUp(self):
@@ -119,6 +120,39 @@ class TestFiveCardDraw(unittest.TestCase):
         self.assertTrue(self.game.players[1].active)  # Bob is still active
         self.assertEqual(self.game.pot, 0)  # Pot should remain empty
 
+    def test_pattern(self):
+        self.assertEqual(choose_discard("PatternKeeper",self.RoyalFlush), [])
+
+        # Straight Flush
+        self.assertEqual(choose_discard("PatternKeeper",self.StraightFlush), [])
+
+        # Four of a Kind
+        self.assertEqual(choose_discard("PatternKeeper",self.Four), [5])
+
+        # Full House
+        self.assertEqual(choose_discard("PatternKeeper",self.FullHouse), [])
+
+        # Flush
+        self.assertEqual(choose_discard("PatternKeeper",self.Flush), [])
+        #
+        # # Straight
+        self.assertEqual(choose_discard("PatternKeeper",self.Strait), [])
+        #
+        # # Three of a Kind
+        self.assertEqual(choose_discard("PatternKeeper",self.Three), [4,5])
+
+        # # Two Pair
+        self.assertEqual(choose_discard("PatternKeeper",self.TwoPair), [5])
+        #
+        # # A Pair
+        self.assertEqual(choose_discard("PatternKeeper",self.APair), [1,2,5])
+        #
+        # # High Card
+        self.assertEqual(choose_discard("PatternKeeper",self.HighCard), [1,2,3,4])
+        #
+        # # Cases from games
+        self.assertEqual(choose_discard("PatternKeeper",self.hand1), [1,3,4,5])
+        self.assertEqual(choose_discard("PatternKeeper",self.hand2), [1,2,4,5])
 
 # This allows the tests to be run from the command line
 if __name__ == '__main__':
