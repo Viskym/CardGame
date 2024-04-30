@@ -114,6 +114,84 @@ print(len(generate_all_possible_discards([1, 2, 3, 4, 5])))
 
 
 
+def get_remaining_hand(hand, discardSet):
+    for card in discardSet:
+        remainingHand = hand.remove(card)
+    return remainingHand
+
+totalDeck = list(range(1, 53))
+
+def simulate_new_hands(hand, discardSetList):
+
+    for discardSet in discardSetList:
+
+        deckLen = 52
+        discardSetLen = len(discardSet)
+        handLen = len(hand)
+        availableDeck = []
+        availableDeckLen = deckLen - handLen
+
+        print('Current discardSet: ', discardSet)
+        print('This set has ', len(discardSet), 'cards removed, so', len(hand)-len(discardSet), 'are left')
+        print('There are ', availableDeckLen, 'cards to choose from to replace the discards')
+        
+        for card in totalDeck:
+            if card not in hand:
+                availableDeck.append(card)
+        
+        handGap = handLen - discardSetLen
+        print(availableDeck)
+
+        draw_combinations(availableDeck, discardSetLen)
+
+        
+def draw_combinations(deck, r):
+    n = len(deck) # Length of deck
+    indices = [] # Empty indices
+
+    for i in range(r):
+        indices.append(i)
+    # Initialise a list of indices (0 to len(r) - 1)
+    combinations_list = [] # List to fill with combinations
+
+    # Iterate across the indices generated, append the deck card at that index in the deck
+    combination = []
+    for i in indices:
+        combination.append(deck[i])
+    combinations_list.append(tuple(combination))
+
+    flag = True
+    while flag:
+
+        flag = False
+        # Check whether to exit the while loop
+        # If the value in the index list at index i is less than the maximum value it is allowed to take
+        # which is equal to the 
+
+        for i in reversed(range(r)):
+            if indices[i] != i + n - r:
+                print('break!')
+                flag = True
+                # Flag will not be set to true if none of the indexes are not at their maximum allowed value
+                break
+        if flag !=True:
+            return combinations_list
+
+        indices[i] += 1
+        for j in range(i + 1, r):
+            indices[j] = indices[j - 1] + 1
+        
+        combination = []
+        for i in indices:
+            combination.append(deck[i])
+        combinations_list.append(tuple(combination))
+
+
+        
+          
+d=generate_all_possible_discards([1,2,3,4,5])
+print(simulate_new_hands([1,2,3,4,5], d))
+
 """
 function simulate_new_hands(original_hand, discard_set):
     # Simulate drawing cards to replace the discarded ones and generate new hands. 
