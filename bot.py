@@ -1,5 +1,5 @@
 from cards import *
-from FiveCardDraw import hand_rank
+#from FiveCardDraw import hand_rank
 
 def choose_betting(isFinal: bool, hand: list[Card]):
     """
@@ -97,46 +97,23 @@ def best_discard_strategy(hand):
     return best_discard
 
 def generate_all_possible_discards(hand):
-    # Generate all subsets of the hand (all possible sets of cards to discard), 32 in total.
-    all_possible_discards = []
+    discards = [[]]
 
-    # Case of 1 card
-    for i in range(len(hand)):
+    for card in hand: 
+        subsets_to_add = [] # Initialises a subset list as empty, that will be added to discards
 
-        all_possible_discards.append([hand[i]])
+        for subset in discards: 
+            # For each subset currently in discards, add the current card, append these to discards
+            new_subset = subset + [card]
+            subsets_to_add.append(new_subset)
+            print("Card is: ", card, "adding to create: ", new_subset)
+        discards.extend(subsets_to_add)
+    return discards[1:] # Do not return initial empty list
 
-    # Case of 2 cards
-    for i in range(len(hand)):
-
-        for j in range(i + 1, len(hand)):
-
-            if i != j:
-
-                all_possible_discards.append([hand[i], hand[j]])
-    # Case of 3 cards
-    for i in range(len(hand)):
-
-        for j in range(i + 1, len(hand)):
-
-            for k in range(j + 1, len(hand)):
-
-                if i != j != k:
-                    all_possible_discards.append([hand[i], hand[j], hand[k]])
-    # Case of 4 cards
-
-    # Case of 5 cards
-    # Will probably try this again with recursion maybe
-    
+print(len(generate_all_possible_discards([1, 2, 3, 4, 5])))
 
 
 
-
-
-
-
-    return all_possible_discards
-
-print(generate_all_possible_discards([1,2,3]))
 """
 function simulate_new_hands(original_hand, discard_set):
     # Simulate drawing cards to replace the discarded ones and generate new hands. 
