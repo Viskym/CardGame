@@ -108,7 +108,7 @@ def generate_all_possible_discards(hand):
             # For each subset currently in discards, add the current card, append these to discards
             new_subset = subset + [card]
             subsets_to_add.append(new_subset)
-            print("Card is: ", card, "adding to create: ", new_subset)
+            #print("Card is: ", card, "adding to create: ", new_subset)
         discards.extend(subsets_to_add)
     return discards
 
@@ -262,54 +262,12 @@ def calculate_relative_values(rankCounts):
 def run_best_discard():
     rank_counts = discard_rank_count_calculator((simulate_new_hands(hand, d)))
     relative_values = calculate_relative_values(rank_counts)
-    print(relative_values)
+    maxWeight = 0
+    optimalDiscard = None
+    for discard, weight in relative_values.items():
+        if weight > maxWeight:
+            maxWeight = weight
+            optimalDiscard = discard
+    return optimalDiscard
+print(run_best_discard())
 
-run_best_discard()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""
-function simulate_new_hands(original_hand, discard_set):
-    # Simulate drawing cards to replace the discarded ones and generate new hands. 
-    remaining_deck = get_remaining_deck(original_hand, discard_set)
-    return generate_new_hands(original_hand, discard_set, remaining_deck)
-
-function evaluate_hand(hand):
-    # Determine the poker value of a hand based on poker rules
-    return calculate_hand_value(hand)
-
-function get_remaining_deck(hand, discarded):
-    # Determine which cards are left in the deck after discards
-    return remove_discarded_from_deck(hand, discarded)
-
-function generate_new_hands(hand, discarded, deck):
-    # Form new hands by combining remaining hand cards with new draws from the deck
-    remaining_hand = remove_cards(hand, discarded)
-    possible_draws = get_combinations(deck, len(discarded))
-    return [combine(remaining_hand, draw) for draw in possible_draws]
-"""
