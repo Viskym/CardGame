@@ -150,8 +150,8 @@ def simulate_new_hands(hand, discardSetList):
         
         #print("Available cards in deck:", availableDeck)
 
-        # Next block will call the draw_combinations function for each possible discard count. The possible discards are 31.
-        # There will be 31 calls of the draw_combinations function that will generate each a list of hands.
+        # Next block will call the draw_combinations function for each possible discard count. The possible discards are 32.
+        # There will be 32 calls of the draw_combinations function that will generate each a list of hands.
         # These hands then need to be graded in terms of their value and their probability and given a weight
 
         draws = draw_combinations(availableDeck, discardSetLen)
@@ -173,7 +173,7 @@ def simulate_new_hands(hand, discardSetList):
 
         newHandsPerDiscardSet[tuple(discardSet)] = handForDiscard
 
-    print('Possible hands generated!')
+    #print('Possible hands generated!')
     return newHandsPerDiscardSet
 
         
@@ -197,9 +197,6 @@ def draw_combinations(deck, r):
 
         flag = False
         # Check whether to exit the while loop
-        # If the value in the index list at index i is less than the maximum value it is allowed to take
-        # which is equal to the 
-
         for i in reversed(range(r)):
             if indices[i] != i + n - r:
                 #print('break!')
@@ -208,7 +205,7 @@ def draw_combinations(deck, r):
                 break
 
         if flag !=True:
-            print('Possible draws generated!')
+            #print('Possible draws generated!')
             return combinations_list
 
         indices[i] += 1
@@ -234,25 +231,17 @@ def discard_rank_count_calculator(handSetDict):
         discardRankCounts[discardSet] = {}
         for hand in handSet:
             handValue = hand_rank(hand)[0]
-            #print(handValue)
-
-            #probability = hand_probability(handValue)
-
-            #weight = handValue*probability
             if handValue in discardRankCounts[discardSet]:
                 discardRankCounts[discardSet][handValue] += 1
             else:
                 discardRankCounts[discardSet][handValue] = 1
-
-            #discardValues[discardSet] += weight
-    print('Discard weights generated!')
+    print('Discard rank counts generated!')
     return discardRankCounts
 
 
 def calculate_relative_values(rankCounts):
     
     rank_weights = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 8, 8: 8}
-
     relative_values = {}
 
     for discard_set, rankCountDiscard in rankCounts.items():
@@ -266,13 +255,12 @@ def calculate_relative_values(rankCounts):
 
         # Store the total weighted probability for this discard set
         relative_values[discard_set] = total_weighted_probability
-    print('Relative values generated!')
+    print('Weights generated!')
     return relative_values
 
 
 def run_best_discard():
     rank_counts = discard_rank_count_calculator((simulate_new_hands(hand, d)))
-    print(rank_counts)
     relative_values = calculate_relative_values(rank_counts)
     print(relative_values)
 
