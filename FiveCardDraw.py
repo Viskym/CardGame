@@ -1,5 +1,6 @@
 from cards import *
 import bot
+from hand_rank import hand_rank
 
 class FiveCardDraw:
     def __init__(self, player_names, starting_money):
@@ -132,7 +133,7 @@ class FiveCardDraw:
                 best_player = compare_hands(best_player, player)
         return best_player
 
-
+'''
 def hand_rank(hand):
     """
     Determines the ranking of a poker hand.
@@ -179,7 +180,7 @@ def hand_rank(hand):
         return (1, rank_sorted)  # One pair
     else:
         return (0, rank_sorted_by_index)  # High card
-
+'''
 
 def compare_hands(player1, player2):
     hand1, hand2 = player1.hands, player2.hands

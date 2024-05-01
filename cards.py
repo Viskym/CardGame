@@ -41,6 +41,9 @@ class Card:
     def __lt__(self, other):
         return (self.ranks.index(self.rank), self.suits.index(self.suit)) < (
             self.ranks.index(other.rank), self.suits.index(other.suit))
+    
+    def __hash__(self):
+        return hash((self.rank, self.suit))
 
 
 class Deck:
