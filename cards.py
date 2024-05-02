@@ -11,10 +11,10 @@ class Card:
     True
     """
     ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
-    suits = ['Spades', 'Hearts', 'Diamonds', 'Clubs']
+    suits = ['♠', '♥', '♦', '♣']
 
     def __init__(self, suit, rank) -> None:
-        self.suit_dict = {'♠': 'Spades', '♥': 'Hearts', '♦': 'Diamonds', '♣': 'Clubs'}
+        self.suit_dict = {'Spades': '♠', 'Hearts': '♥', 'Diamonds': '♦', 'Clubs': '♣'}
         if suit in self.suit_dict.keys():
             self.suit = self.suit_dict[suit]
         else:
@@ -22,6 +22,9 @@ class Card:
         self.rank = rank
 
     def __repr__(self) -> str:
+        return self.suit + self.rank
+
+    def __str__(self) -> str:
         color_dict = {
             'Spades': '\033[30m♠\033[0m',
             'Hearts': '\033[31m♥\033[0m',
@@ -29,7 +32,6 @@ class Card:
             'Clubs': '\033[30m♣\033[0m',
         }
         return color_dict[self.suit] + self.rank
-
     def reveal(self):
         print(str(self))
         return str(self)
@@ -41,7 +43,7 @@ class Card:
     def __lt__(self, other):
         return (self.ranks.index(self.rank), self.suits.index(self.suit)) < (
             self.ranks.index(other.rank), self.suits.index(other.suit))
-    
+
     def __hash__(self):
         return hash((self.rank, self.suit))
 
@@ -83,6 +85,9 @@ class Deck:
             return (self.__values.index(card.rank), self.__suits.index(card.suit))
 
         self.cards = sorted(self.cards, key=card_sort_key)
+
+    def remove(self, card: Card):
+        self.cards.remove(card)
 
 
 class Player:

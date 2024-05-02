@@ -1,8 +1,24 @@
-from cards import *
+from cards import Card, create_card_list
+from collections import Counter
+import functools
 
+
+def memoize(func):
+    cache = {}
+
+    @functools.wraps(func)
+    def inner(*args):
+        if args not in cache:
+            cache[args] = func(*args)
+        return cache[args]
+
+    return inner
+
+
+@memoize
 def hand_rank(hand):
     """
-    Determines the ranking of a poker hand.
+    Determines the ranking of a poker hand. Disable @memoize for doctests.
 
     >>> RoyalFlush = [Card('Hearts', '10'), Card('Hearts', 'J'), Card('Hearts', 'Q'), Card('Hearts', 'K'), Card('Hearts', 'A')]
     >>> hand_rank(RoyalFlush)
@@ -20,30 +36,43 @@ def hand_rank(hand):
     >>> hand_rank(case2)
     (0, ['K', '10', '8', '5', '2'])
     """
-    hand_only_rank = [c.rank for c in hand]
-    rank_counts = {r: ''.join(sorted(hand_only_rank)).count(r) for r in hand_only_rank}
-    rank_sorted = sorted(rank_counts, key=lambda r: (rank_counts[r], Card.ranks.index(r)), reverse=True)
-    rank_sorted_by_index = sorted(rank_sorted, key=lambda r: Card.ranks.index(r), reverse=True)
 
-    flush = len(set(card.suit for card in hand)) == 1
-    straight = Card.ranks.index(rank_sorted_by_index[0]) - Card.ranks.index(rank_sorted_by_index[-1]) == 4 and len(set(rank_sorted_by_index)) == 5
+    # Efficient rank and suit extraction
+    ranks = [card.rank for card in hand]
+    suits = [card.suit for card in hand]
+
+    # Count the occurrences of each rank
+    rank_counts = Counter(ranks)
+    sorted_ranks = sorted(rank_counts, key=lambda r: (-rank_counts[r], -Card.ranks.index(r)))
+
+    flush = len(set(suits)) == 1
+    rank_indices = sorted(Card.ranks.index(rank) for rank in ranks)
+    straight = len(set(rank_indices)) == 5 and (rank_indices[-1] - rank_indices[0] == 4)
 
     if straight and flush:
-        return (8, rank_sorted_by_index[0])  # Straight flush
-    elif rank_counts[max(rank_sorted, key=rank_counts.get)] == 4:
-        return (7, rank_sorted)  # Four of a kind
-    elif sorted(rank_counts.values()) == [2, 3]:
-        return (6, rank_sorted)  # Full house
-    elif flush:
-        return (5, rank_sorted)  # Flush
-    elif straight:
-        return (4, rank_sorted_by_index[0])  # Straight
-    elif rank_counts[max(rank_sorted, key=rank_counts.get)] == 3:
-        return (3, rank_sorted)  # Three of a kind
-    elif list(rank_counts.values()).count(2) == 2:
-        return (2, rank_sorted)  # Two pairs
-    elif 2 in rank_counts.values():
-        return (1, rank_sorted)  # One pair
-    else:
-        return (0, rank_sorted_by_index)  # High card
+        return (8, Card.ranks[rank_indices[-1]])  # Straight flush
+    if rank_counts[sorted_ranks[0]] == 4:
+        return (7, [sorted_ranks[0], sorted_ranks[-1]])  # Four of a kind
+    if rank_counts[sorted_ranks[0]] == 3 and rank_counts[sorted_ranks[1]] == 2:
+        return (6, sorted_ranks[:2])  # Full house
+    if flush:
+        return (5, sorted_ranks)  # Flush
+    if straight:
+        return (4, Card.ranks[rank_indices[-1]])  # Straight
+    if rank_counts[sorted_ranks[0]] == 3:
+        return (3, sorted_ranks[:3])  # Three of a kind
+    if list(rank_counts.values()).count(2) == 2:
+        return (2, sorted_ranks[:2])  # Two pairs
+    if 2 in rank_counts.values():
+        return (1, sorted_ranks[:2])  # One pair
+    return (0, sorted_ranks)  # High card
 
+
+if __name__ == '__main__':
+    import time
+
+    t = time.perf_counter()
+    case2 = create_card_list("[♠10, ♣2, ♥K, ♣8, ♦5]")
+    print(hand_rank(case2))
+    elapsed_time = time.perf_counter() - t
+    print(elapsed_time)
