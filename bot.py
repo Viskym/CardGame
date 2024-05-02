@@ -1,6 +1,7 @@
 from cards import *
 from hand_rank import hand_rank
 import multiprocessing
+import collections
 
 pool_size = multiprocessing.cpu_count()
 

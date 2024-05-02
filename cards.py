@@ -9,6 +9,7 @@ class Card:
     >>> card10 = Card('Clubs', '10')
     >>> cardA > card10
     True
+    >>> print(card10)
     """
     ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
     suits = ['♠', '♥', '♦', '♣']
@@ -26,12 +27,13 @@ class Card:
 
     def __str__(self) -> str:
         color_dict = {
-            'Spades': '\033[30m♠\033[0m',
-            'Hearts': '\033[31m♥\033[0m',
-            'Diamonds': '\033[31m♦\033[0m',
-            'Clubs': '\033[30m♣\033[0m',
+            '♠': '\033[30m♠\033[0m',
+            '♥': '\033[31m♥\033[0m',
+            '♦': '\033[31m♦\033[0m',
+            '♣': '\033[30m♣\033[0m',
         }
         return color_dict[self.suit] + self.rank
+
     def reveal(self):
         print(str(self))
         return str(self)

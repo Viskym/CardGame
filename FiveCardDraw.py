@@ -2,6 +2,7 @@ from cards import *
 import bot
 from hand_rank import hand_rank
 
+
 class FiveCardDraw:
     def __init__(self, player_names, starting_money):
         self.deck = Deck()
@@ -18,7 +19,7 @@ class FiveCardDraw:
 
     def show_hands(self):
         for player in self.players:
-            print(f"{player.name}'s hand: {player.hands}")
+            print(f"{player.name}'s hand: {' '.join([str(card) for card in player.hands])}")
 
     def betting_round(self):
         """
@@ -111,7 +112,7 @@ class FiveCardDraw:
             else:
                 if not player.active:
                     continue
-                print(f"{player.name}'s current hand: {player.hands}")
+                print(f"{player.name}'s current hand: {' '.join([str(card) for card in player.hands])}")
                 discard_indices = input("Enter the positions of cards to discard (e.g., 1 3 5): ")
                 discard_indices = list(map(int, discard_indices.split()))
                 self.replace_cards(player, discard_indices)
@@ -132,6 +133,7 @@ class FiveCardDraw:
             else:
                 best_player = compare_hands(best_player, player)
         return best_player
+
 
 def compare_hands(player1, player2):
     hand1, hand2 = player1.hands, player2.hands
@@ -178,4 +180,4 @@ if __name__ == '__main__':
     game.show_hands()
     game.betting_round()
     winner = game.determine_winner()
-    print(f"The winner is {winner.name} with the hand {winner.hands}")
+    print(f"The winner is {winner.name} with the hand {' '.join([str(card) for card in winner.hands])}")

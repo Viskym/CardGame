@@ -15,7 +15,7 @@ def memoize(func):
     return inner
 
 
-@memoize
+# @memoize
 def hand_rank(hand):
     """
     Determines the ranking of a poker hand. Disable @memoize for doctests.
