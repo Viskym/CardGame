@@ -255,18 +255,59 @@ def calculate_relative_values(rankCounts):
     return relative_values
 
 
+def calculate_relative_probabilities(rankCounts):
+    for discard_set, rankCountDiscard in rankCounts.items():
+        total_hands = sum(rankCountDiscard.values())
+        for rank, count in rankCountDiscard.items():
+            probability = count / total_hands
+            rankCounts[discard_set][rank] = probability
+    print('Probabilities generated!')
+    return rankCounts
+
+
 def run_best_discard(hand):
     discards = generate_all_possible_discards(hand)
     rank_counts = discard_rank_count_calculator((simulate_new_hands(hand, discards)))
     relative_values = calculate_relative_values(rank_counts)
+    probs = calculate_relative_probabilities(rank_counts)
+    
     maxWeight = 0
     optimalDiscard = None
     for discard, weight in relative_values.items():
         if weight > maxWeight:
             maxWeight = weight
             optimalDiscard = discard
-    return optimalDiscard
     
+    for discard_set, rankProbDiscard in probs.items():
+        print('\n', 'Discard Set', discard_set, ':\n')
+
+        sorted_probs = sorted(rankProbDiscard.items(), key=lambda x: x[1], reverse=True)
+        for rank, prob in sorted_probs:
+            
+            out = ''
+            if rank == 0:
+                out += 'High card'
+            if rank == 1:
+                out += 'One pair'
+            if rank == 2:
+                out += 'Two Pairs'
+            if rank == 3:
+                out += 'Three of a kind'
+            if rank == 4:
+                out += 'Straight'
+            if rank == 5:
+                out += 'Flush'
+            if rank == 6:
+                out += 'Full house'
+            if rank == 7:
+                out += 'Four of a kind'
+            if rank == 8:
+                out += 'Straight flush'
+
+            formatted_probability = "{:.3g}".format(prob*100)
+            print(f"{out}: {formatted_probability}%")
+    print('\n')        
+    return optimalDiscard
+
 hand = create_card_list("[♦9, ♦10, ♥6, ♥Q, ♠8]") 
 print(run_best_discard(hand))
-
