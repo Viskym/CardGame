@@ -4,7 +4,7 @@ import cards
 from FiveCardDraw import *
 from unittest.mock import patch
 from bot import *
-
+from hand_rank import hand_rank
 class TestFiveCardDraw(unittest.TestCase):
     def setUp(self):
         """Set up a game instance with known player names and a fixed starting money amount."""

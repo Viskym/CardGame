@@ -15,7 +15,7 @@ def choose_betting(isFinal: bool, hand: list[Card]):
     >>> chooose_betting(True,cards.create_card_list("[♦5, ♥Q, ♠9, ♦9, ♥9]"))
     ('raise',0.25)
     """
-    return ('call',0)
+    return ('call', 0)
 
 
 def choose_discard(mode: str, hand: list[Card]):
@@ -41,38 +41,38 @@ def choose_discard(mode: str, hand: list[Card]):
     [2]
     """
     #hand_types = ["High card", "One pair", "Two pairs", "Three of a kind", "Straight", "Flush", "Full house",
-                  # "Four of a kind", "Straight flush"]
+    # "Four of a kind", "Straight flush"]
 
     match mode:
         case 'PatternKeeper':
-            pattern,rank_sorted  = hand_rank(hand)
+            pattern, rank_sorted = hand_rank(hand)
             discard_list = []
             hand_only_rank = [c.rank for c in hand]
             rank_sorted_by_index = sorted(rank_sorted, key=lambda r: Card.ranks.index(r), reverse=True)
             match pattern:
                 case 8:
                     pass
-                case 7: #four of a kind
-                    discard_list.append(hand_only_rank.index(rank_sorted[1])+1)
-                case 6: #full house
+                case 7:  #four of a kind
+                    discard_list.append(hand_only_rank.index(rank_sorted[1]) + 1)
+                case 6:  #full house
                     pass
-                case 5: #flush
+                case 5:  #flush
                     pass
-                case 4: #straight
+                case 4:  #straight
                     pass
-                case 3: #three of a kind
-                    discard_list.append(hand_only_rank.index(rank_sorted[1])+1)
-                    discard_list.append(hand_only_rank.index(rank_sorted[2])+1)
-                case 2: #two pairs
-                    discard_list.append(hand_only_rank.index(rank_sorted[-1])+1)
-                case 1: #one pair
-                    for i in range(1,4):
-                        discard_list.append(hand_only_rank.index(rank_sorted[i])+1)
-                case 0: #high card
-                    for i in range(1,5):
-                        discard_list.append(hand_only_rank.index(rank_sorted_by_index[i])+1)
+                case 3:  #three of a kind
+                    discard_list.append(hand_only_rank.index(rank_sorted[1]) + 1)
+                    discard_list.append(hand_only_rank.index(rank_sorted[2]) + 1)
+                case 2:  #two pairs
+                    discard_list.append(hand_only_rank.index(rank_sorted[-1]) + 1)
+                case 1:  #one pair
+                    for i in range(1, 4):
+                        discard_list.append(hand_only_rank.index(rank_sorted[i]) + 1)
+                case 0:  #high card
+                    for i in range(1, 5):
+                        discard_list.append(hand_only_rank.index(rank_sorted_by_index[i]) + 1)
 
-    #generate discard
+        #generate discard
         case 'DecisionTree':
             pass
     return sorted(discard_list) if len(discard_list) != 0 else discard_list
@@ -89,7 +89,7 @@ def best_discard_strategy(hand):
         for new_hand in simulate_new_hands(hand, discard_set):
             # Calculate the value of the new hand
             hand_value = evaluate_hand(new_hand)
-            
+
             # Update the best discard strategy if this hand is better
             if hand_value > max_value:
                 max_value = hand_value
@@ -101,10 +101,10 @@ def best_discard_strategy(hand):
 def generate_all_possible_discards(hand):
     discards = [[]]
 
-    for card in hand: 
-        subsets_to_add = [] # Initialises a subset list as empty, that will be added to discards
+    for card in hand:
+        subsets_to_add = []  # Initialises a subset list as empty, that will be added to discards
 
-        for subset in discards: 
+        for subset in discards:
             # For each subset currently in discards, add the current card, append these to discards
             new_subset = subset + [card]
             subsets_to_add.append(new_subset)
@@ -112,15 +112,16 @@ def generate_all_possible_discards(hand):
         discards.extend(subsets_to_add)
     return discards
 
-def get_remaining_hand(hand, discardSet):
-    remainingHand.copy(hand)
-    for card in discardSet:
-        remainingHand.remove(card)
-    return remainingHand
 
-
-Deck = Deck()
-totalDeck  = Deck.cards
+# def get_remaining_hand(hand, discardSet):
+#     remainingHand.copy(hand)
+#     for card in discardSet:
+#         remainingHand.remove(card)
+#     return remainingHand
+#
+#
+# Deck = Deck()
+# totalDeck = Deck.cards
 
 
 # simulate_new_hands takes the list of current hand cards, and the list of discard sets. It iterates through that discard set list
@@ -129,8 +130,9 @@ totalDeck  = Deck.cards
 
 
 def simulate_new_hands(hand, discardSetList):
-    
     newHandsPerDiscardSet = {}
+    newDeck = Deck()
+    totalDeck = newDeck.cards
     for discardSet in discardSetList:
 
         handForDiscard = []
@@ -143,11 +145,11 @@ def simulate_new_hands(hand, discardSetList):
         #print('Current discardSet: ', discardSet)
         #print('This set has ', len(discardSet), 'cards removed, so', len(hand)-len(discardSet), 'are left')
         #print('There are ', availableDeckLen, 'cards to choose from to replace the discards')
-        
+
         for card in totalDeck:
             if card not in hand:
                 availableDeck.append(card)
-        
+
         #print("Available cards in deck:", availableDeck)
 
         # Next block will call the draw_combinations function for each possible discard count. The possible discards are 32.
@@ -155,18 +157,17 @@ def simulate_new_hands(hand, discardSetList):
         # These hands then need to be graded in terms of their value and their probability and given a weight
 
         draws = draw_combinations(availableDeck, discardSetLen)
-        
+
         # Drawing cards. This returns a list of tuples. Tuples need to be added back to the cards not discarded
         # drawCombination is a tuple of drawn cards from the draw pile, of length discardSetLen
 
         remainingHand = hand.copy()
-        
+
         for card in discardSet:
             remainingHand.remove(card)
         #print(remainingHand)
 
         for drawCombination in draws:
-            
             handTemp = list(remainingHand) + list(drawCombination)
             #print('New hand full: ', handTemp)
             handForDiscard.append(tuple(handTemp))
@@ -176,15 +177,15 @@ def simulate_new_hands(hand, discardSetList):
     #print('Possible hands generated!')
     return newHandsPerDiscardSet
 
-        
+
 def draw_combinations(deck, r):
-    n = len(deck) # Length of deck
-    indices = [] # Empty indices
+    n = len(deck)  # Length of deck
+    indices = []  # Empty indices
 
     for i in range(r):
         indices.append(i)
     # Initialise a list of indices (0 to len(r) - 1)
-    combinations_list = [] # List to fill with combinations
+    combinations_list = []  # List to fill with combinations
 
     # Iterate across the indices generated, append the deck card at that index in the deck
     combination = []
@@ -204,21 +205,21 @@ def draw_combinations(deck, r):
                 # Flag will not be set to true if none of the indexes are not at their maximum allowed value
                 break
 
-        if flag !=True:
+        if flag != True:
             #print('Possible draws generated!')
             return combinations_list
 
         indices[i] += 1
         for j in range(i + 1, r):
             indices[j] = indices[j - 1] + 1
-        
+
         combination = []
         for i in indices:
             combination.append(deck[i])
         combinations_list.append(tuple(combination))
-      
 
-def discard_rank_count_calculator(handSetDict):
+
+def discard_rank_count_calculator(handSetDict, debug=False):
     # handSetDict should be the dictionary generated by the simulate_new_hands function
     discardValues = {}
     handRankCounts = {}
@@ -231,12 +232,12 @@ def discard_rank_count_calculator(handSetDict):
                 discardRankCounts[discardSet][handValue] += 1
             else:
                 discardRankCounts[discardSet][handValue] = 1
-    print('Discard rank counts generated!')
+    if debug:
+        print('Discard rank counts generated!')
     return discardRankCounts
 
 
-def calculate_relative_values(rankCounts):
-    
+def calculate_relative_values(rankCounts,debug=False):
     rank_weights = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 8, 8: 8}
     relative_values = {}
 
@@ -244,70 +245,67 @@ def calculate_relative_values(rankCounts):
         total_weighted_probability = 0
 
         for rank, count in rankCountDiscard.items():
-            
             probability = count / sum(rankCountDiscard.values())
-            weighted_probability = probability*rank_weights.get(rank)
+            weighted_probability = probability * rank_weights.get(rank)
             total_weighted_probability += weighted_probability
 
         # Store the total weighted probability for this discard set
         relative_values[discard_set] = total_weighted_probability
-    print('Weights generated!')
+    if debug:
+        print('Weights generated!')
     return relative_values
 
 
-def calculate_relative_probabilities(rankCounts):
+def calculate_relative_probabilities(rankCounts,debug=False):
     for discard_set, rankCountDiscard in rankCounts.items():
         total_hands = sum(rankCountDiscard.values())
         for rank, count in rankCountDiscard.items():
             probability = count / total_hands
             rankCounts[discard_set][rank] = probability
-    print('Probabilities generated!')
+    if debug:
+        print('Probabilities generated!')
     return rankCounts
 
 
-def run_best_discard(hand):
+def run_best_discard(hand, debug=False):
     discards = generate_all_possible_discards(hand)
     rank_counts = discard_rank_count_calculator((simulate_new_hands(hand, discards)))
     relative_values = calculate_relative_values(rank_counts)
+    optimalDiscard = max(relative_values, key=relative_values.get)
     probs = calculate_relative_probabilities(rank_counts)
-    
-    maxWeight = 0
-    optimalDiscard = None
-    for discard, weight in relative_values.items():
-        if weight > maxWeight:
-            maxWeight = weight
-            optimalDiscard = discard
-    
-    for discard_set, rankProbDiscard in probs.items():
-        print('\n', 'Discard Set', discard_set, ':\n')
 
-        sorted_probs = sorted(rankProbDiscard.items(), key=lambda x: x[1], reverse=True)
-        for rank, prob in sorted_probs:
-            
-            out = ''
-            if rank == 0:
-                out += 'High card'
-            if rank == 1:
-                out += 'One pair'
-            if rank == 2:
-                out += 'Two Pairs'
-            if rank == 3:
-                out += 'Three of a kind'
-            if rank == 4:
-                out += 'Straight'
-            if rank == 5:
-                out += 'Flush'
-            if rank == 6:
-                out += 'Full house'
-            if rank == 7:
-                out += 'Four of a kind'
-            if rank == 8:
-                out += 'Straight flush'
+    if debug:
+        def remove_ansi_codes(text):
+            """ Remove ANSI escape codes from a string """
+            import re
+            ansi_escape = re.compile(r'\x1B[@-_][0-?]*[ -/]*[@-~]')
+            return ansi_escape.sub('', text)
 
-            formatted_probability = "{:.3g}".format(prob*100)
-            print(f"{out}: {formatted_probability}%")
-    print('\n')        
+        # Calculate maximum width for the 'Cards' column considering ANSI codes
+        max_cards_width = max(len(remove_ansi_codes(str(cards))) for cards in rank_counts.keys()) + 2
+        rank_names = {
+            0: 'High Card',
+            1: 'One Pair',
+            2: 'Two Pairs',
+            3: 'Three of a Kind',
+            4: 'Straight',
+            5: 'Flush',
+            6: 'Full House',
+            7: 'Four of a Kind',
+            8: 'Straight Flush'
+        }
+        # Print headers with alignment
+        header = f"{'Cards'.ljust(max_cards_width)}" + "  ".join(f"{name}" for name in rank_names.values())
+        print(header)
+        print('-' * len(header))
+        # Print rows with formatted probabilities
+        for cards, ranks in probs.items():
+            card_str = f"{remove_ansi_codes(str(cards))}".ljust(max_cards_width)
+            row = [card_str] + [f"{ranks.get(rank, 0):>10.2f}" for rank in range(9)]  # right-align probabilities
+            print("  ".join(row))
     return optimalDiscard
 
-hand = create_card_list("[♦9, ♦10, ♥6, ♥Q, ♠8]") 
-print(run_best_discard(hand))
+
+if __name__ == '__main__':
+    hand = create_card_list("[♦9, ♦10, ♥6, ♥Q, ♠8]")
+    print(run_best_discard(hand, debug=True))
