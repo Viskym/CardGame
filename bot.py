@@ -270,9 +270,9 @@ def calculate_relative_probabilities(rankCounts,debug=False):
 def run_best_discard(hand, debug=False):
     discards = generate_all_possible_discards(hand)
     rank_counts = discard_rank_count_calculator((simulate_new_hands(hand, discards)))
-    relative_values = calculate_relative_values(rank_counts)
+    relative_values = calculate_relative_values(rank_counts, debug=debug)
     optimalDiscard = max(relative_values, key=relative_values.get)
-    probs = calculate_relative_probabilities(rank_counts)
+    probs = calculate_relative_probabilities(rank_counts, debug=debug)
 
     if debug:
         def remove_ansi_codes(text):
