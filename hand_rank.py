@@ -31,7 +31,15 @@ def hand_rank(hand):
     >>> Four = [Card('Clubs', '5'), Card('Hearts', '5'), Card('Diamonds', '5'), Card('Spades', '5'), Card('Hearts', 'A')]
     >>> hand_rank(Four)
     (7, ['5', 'A'])
-
+    >>> ThreeKind = create_card_list("[♣4, ♦4, ♥4, ♦J, ♣3]")
+    >>> hand_rank(ThreeKind)
+    (3, ['4', 'J', '3'])
+    >>> TwoPairs = create_card_list("[♣2, ♠2, ♠10, ♣7, ♦7]")
+    >>> hand_rank(TwoPairs)
+    (2, ['7', '2', '10'])
+    >>> OnePair = create_card_list("[♣4, ♦4, ♥10, ♦A, ♣Q]")
+    >>> hand_rank(OnePair)
+    (1, ['4', 'A', 'Q', '10'])
     >>> case2 = create_card_list("[♠10, ♣2, ♥K, ♣8, ♦5]")
     >>> hand_rank(case2)
     (0, ['K', '10', '8', '5', '2'])
@@ -60,11 +68,11 @@ def hand_rank(hand):
     if straight:
         return (4, Card.ranks[rank_indices[-1]])  # Straight
     if rank_counts[sorted_ranks[0]] == 3:
-        return (3, sorted_ranks[:3])  # Three of a kind
+        return (3, sorted_ranks)  # Three of a kind
     if list(rank_counts.values()).count(2) == 2:
-        return (2, sorted_ranks[:2])  # Two pairs
+        return (2, sorted_ranks)  # Two pairs
     if 2 in rank_counts.values():
-        return (1, sorted_ranks[:2])  # One pair
+        return (1, sorted_ranks)  # One pair
     return (0, sorted_ranks)  # High card
 
 
@@ -72,7 +80,7 @@ if __name__ == '__main__':
     import time
 
     t = time.perf_counter()
-    case2 = create_card_list("[♠10, ♣2, ♥K, ♣8, ♦5]")
+    case2 = create_card_list("[♠10, ♣10, ♥K, ♣8, ♦5]")
     print(hand_rank(case2))
     elapsed_time = time.perf_counter() - t
     print(elapsed_time)

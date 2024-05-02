@@ -8,15 +8,15 @@ pool_size = multiprocessing.cpu_count()
 
 def choose_betting(isFinal: bool, hand: list[Card]):
     """
-    >>> choose_betting(False,cards.create_card_list("[♥4, ♥Q, ♠2, ♥5, ♠A]"))
+    >>> choose_betting(False,create_card_list("[♥4, ♥Q, ♠2, ♥5, ♠A]"))
     ('check',0)
-    >>> choose_betting(True,cards.create_card_list("[♥4, ♥Q, ♠2, ♥5, ♠A]"))
+    >>> choose_betting(True,create_card_list("[♥4, ♥Q, ♠2, ♥5, ♠A]"))
     ('call',0)
-    >>> chooose_betting(False,cards.create_card_list("[♠5, ♥5, ♠4, ♣8, ♥8]"))
+    >>> chooose_betting(False,create_card_list("[♠5, ♥5, ♠4, ♣8, ♥8]"))
     ('raise',0.25)
-    >>> chooose_betting(True,cards.create_card_list("[♠5, ♥5, ♠4, ♣8, ♥8]"))
+    >>> chooose_betting(True,create_card_list("[♠5, ♥5, ♠4, ♣8, ♥8]"))
     ('call',0)
-    >>> chooose_betting(True,cards.create_card_list("[♦5, ♥Q, ♠9, ♦9, ♥9]"))
+    >>> chooose_betting(True,create_card_list("[♦5, ♥Q, ♠9, ♦9, ♥9]"))
     ('raise',0.25)
     """
     return ('call', 0)
@@ -76,9 +76,8 @@ def choose_discard(mode: str, hand: list[Card]):
                     for i in range(1, 5):
                         discard_list.append(hand_only_rank.index(rank_sorted_by_index[i]) + 1)
 
-        #generate discard
         case 'DecisionTree':
-            pass
+            discard_list = [hand.index(i)+1 for i in run_best_discard(hand)]
     return sorted(discard_list) if len(discard_list) != 0 else discard_list
 
 
@@ -209,7 +208,7 @@ def discard_rank_count_calculator(handSetDict, debug=False):
 
 
 def calculate_relative_values(rankCounts, debug=False):
-    rank_weights = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 8, 8: 8}
+    rank_weights = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 6, 6: 9, 7: 25, 8: 50}
     relative_values = {}
 
     for discard_set, rankCountDiscard in rankCounts.items():
