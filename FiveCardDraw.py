@@ -7,6 +7,7 @@ class FiveCardDraw:
     def __init__(self, player_names, starting_money):
         self.deck = Deck()
         self.players = [Player(name) for name in player_names]
+        self.action2 = None
         for player in self.players:
             player.money = starting_money
             player.active = True
@@ -59,12 +60,15 @@ class FiveCardDraw:
 
             while True:
                 if current_bet == 0:
+                    if player.name == 'Alice':
+                        self.action2 = input(f"{player.name}, which strategy do you want Bob to use? (PatternKeeper/DecisionTree): ")
+                        print(f'You choose {self.action2}.')
                     action = input(f"{player.name}, do you want to bet, fold, or check? (bet/fold/check): ")
                     if action == 'fold':
                         player.active = False
                         break
                     elif action == 'bet':
-                        bet_amount = int(input(f"{player.name}, how much would you like to bet? "))
+                        bet_amount = int(input(f"{player.name}, how much would you like to bet? {player.money} left."))
                         if bet_amount <= 0 or bet_amount > player.money:
                             print("Invalid bet amount.")
                             continue
@@ -75,6 +79,7 @@ class FiveCardDraw:
                         break
                     elif action == 'check':
                         break
+
                 else:
                     action = input(f"{player.name}, do you want to call, raise, or fold? (call/raise/fold): ")
                     if action == 'fold':
@@ -106,7 +111,11 @@ class FiveCardDraw:
     def draw_phase(self):
         for player in self.players:
             if player.name == 'Bob':
-                discard_indices = bot.choose_discard("PatternKeeper", player.hands)
+                if self.action2 == 'PatternKeeper':
+                    discard_indices = bot.choose_discard("PatternKeeper", player.hands)
+                else:
+                    discard_indices = bot.choose_discard("DecisionTree",player.hands)
+
                 print(f"Bob discarded: {discard_indices}")
                 self.replace_cards(player, discard_indices)
             else:
