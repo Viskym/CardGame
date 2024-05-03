@@ -5,6 +5,8 @@ from FiveCardDraw import *
 from unittest.mock import patch
 from bot import *
 from hand_rank import hand_rank
+
+
 class TestFiveCardDraw(unittest.TestCase):
     def setUp(self):
         """Set up a game instance with known player names and a fixed starting money amount."""
@@ -92,6 +94,7 @@ class TestFiveCardDraw(unittest.TestCase):
         P1.hands = cards.create_card_list("[♥4, ♥Q, ♠2, ♥5, ♠A]")
         P2.hands = cards.create_card_list("[♦2, ♦3, ♦4, ♥7, ♥A]")
         self.assertEqual(compare_hands(P1, P2), P1)
+
     @patch('builtins.input', side_effect=['bet', '10', 'fold'])
     @patch('builtins.print')
     def test_betting_round(self, mock_print, mock_input):
@@ -121,38 +124,39 @@ class TestFiveCardDraw(unittest.TestCase):
         self.assertEqual(self.game.pot, 0)  # Pot should remain empty
 
     def test_pattern(self):
-        self.assertEqual(choose_discard("PatternKeeper",self.RoyalFlush), [])
+        self.assertEqual(choose_discard("PatternKeeper", self.RoyalFlush), [])
 
         # Straight Flush
-        self.assertEqual(choose_discard("PatternKeeper",self.StraightFlush), [])
+        self.assertEqual(choose_discard("PatternKeeper", self.StraightFlush), [])
 
         # Four of a Kind
-        self.assertEqual(choose_discard("PatternKeeper",self.Four), [5])
+        self.assertEqual(choose_discard("PatternKeeper", self.Four), [5])
 
         # Full House
-        self.assertEqual(choose_discard("PatternKeeper",self.FullHouse), [])
+        self.assertEqual(choose_discard("PatternKeeper", self.FullHouse), [])
 
         # Flush
-        self.assertEqual(choose_discard("PatternKeeper",self.Flush), [])
+        self.assertEqual(choose_discard("PatternKeeper", self.Flush), [])
         #
         # # Straight
-        self.assertEqual(choose_discard("PatternKeeper",self.Strait), [])
+        self.assertEqual(choose_discard("PatternKeeper", self.Strait), [])
         #
         # # Three of a Kind
-        self.assertEqual(choose_discard("PatternKeeper",self.Three), [4,5])
+        self.assertEqual(choose_discard("PatternKeeper", self.Three), [4, 5])
 
         # # Two Pair
-        self.assertEqual(choose_discard("PatternKeeper",self.TwoPair), [5])
+        self.assertEqual(choose_discard("PatternKeeper", self.TwoPair), [5])
         #
         # # A Pair
-        self.assertEqual(choose_discard("PatternKeeper",self.APair), [1,2,5])
+        self.assertEqual(choose_discard("PatternKeeper", self.APair), [1, 2, 5])
         #
         # # High Card
-        self.assertEqual(choose_discard("PatternKeeper",self.HighCard), [1,2,3,4])
+        self.assertEqual(choose_discard("PatternKeeper", self.HighCard), [1, 2, 3, 4])
         #
         # # Cases from games
-        self.assertEqual(choose_discard("PatternKeeper",self.hand1), [1,3,4,5])
-        self.assertEqual(choose_discard("PatternKeeper",self.hand2), [1,2,4,5])
+        self.assertEqual(choose_discard("PatternKeeper", self.hand1), [1, 3, 4, 5])
+        self.assertEqual(choose_discard("PatternKeeper", self.hand2), [1, 2, 4, 5])
+
 
 # This allows the tests to be run from the command line
 if __name__ == '__main__':
